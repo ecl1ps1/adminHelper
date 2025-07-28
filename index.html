@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Helper</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<aside>
+  <h2>Admin Helper</h2>
+  <nav>
+    <a href="#dashboard" data-tab="dashboard" class="active">Дашборд</a>
+    <a href="#online" data-tab="online">Онлайн по логам</a>
+    <a href="#tools" data-tab="tools">Инструменты</a>
+    <a href="#settings" data-tab="settings">Настройки</a>
+  </nav>
+</aside>
+
+<main>
+  <!-- DASHBOARD -->
+  <section id="dashboard" class="tab active">
+    <h1>Дашборд</h1>
+    <div class="card">
+      <p class="muted">Пример базовой стартовой страницы. Основная рабочая вкладка — «Онлайн по логам».</p>
+    </div>
+  </section>
+
+  <!-- ONLINE -->
+  <section id="online" class="tab">
+    <h1>Подсчёт онлайна по логам</h1>
+
+    <div class="card">
+      <label for="logsInput">Логи (вставляйте длинный текст сюда)</label>
+      <textarea id="logsInput" placeholder="2025-07-26 21:07:16  Игрок Artem_Hazhevalov вышел с сервера, время сессии: 00:01:24, авторизация: Есть (Quit)
+2025-07-26 19:57:43  Игрок Artem_Hazhevalov вышел с сервера, время сессии: 00:29:26, авторизация: Есть (Timeout)
+2025-07-26 18:38:16  Игрок Artem_Hazhevalov вышел с сервера, время сессии: 00:09:35, авторизация: Есть (Quit)"></textarea>
+    </div>
+
+    <div class="card">
+      <h3>Фильтр периода</h3>
+      <div class="row">
+        <div>
+          <label for="dateFrom">Дата от</label>
+          <input type="date" id="dateFrom">
+        </div>
+        <div>
+          <label for="dateTo">Дата до</label>
+          <input type="date" id="dateTo">
+        </div>
+        <div>
+          <label for="timeFrom">Время от</label>
+          <input type="time" id="timeFrom" value="10:00">
+        </div>
+        <div>
+          <label for="timeTo">Время до</label>
+          <input type="time" id="timeTo" value="20:00">
+        </div>
+      </div>
+      <button id="calcBtn">Рассчитать</button>
+      <div id="results" class="results" hidden></div>
+    </div>
+
+    <div class="card">
+      <details>
+        <summary>Как это работает</summary>
+        <ul>
+          <li>Парсится дата/время, ник и длительность сессии.</li>
+          <li>Суммируется длительность в указанном диапазоне дат и времени суток.</li>
+        </ul>
+      </details>
+    </div>
+  </section>
+
+  <!-- TOOLS -->
+  <section id="tools" class="tab">
+    <h1>Инструменты</h1>
+    <div class="card">
+      <p class="muted">Здесь могут быть дополнительные админские тулзы.</p>
+    </div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section id="settings" class="tab">
+    <h1>Настройки</h1>
+    <div class="card">
+      <p class="muted">Поместите сюда ваши настройки / авторизации и т.п.</p>
+    </div>
+  </section>
+</main>
+
+<script src="main.js"></script>
+</body>
+</html>
