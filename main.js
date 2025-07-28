@@ -60,13 +60,9 @@ calcBtn.addEventListener('click', () => {
   const timeFrom = (document.getElementById('timeFrom').value || '00:00:00').trim();
   const timeTo = (document.getElementById('timeTo').value || '23:59:59').trim();
 
-  // Проверка на пустые поля
+  // Проверка на пустые логи
   if (!raw) {
     showResult('Пустые логи.');
-    return;
-  }
-  if (!dateFrom || !dateTo) {
-    showResult('Укажите даты «от» и «до».');
     return;
   }
 
@@ -76,9 +72,10 @@ calcBtn.addEventListener('click', () => {
   // Регулярка для парсинга строки лога
   const lineRegex = /^(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2}:\d{2}).*?Игрок\s+(.+?)\s+вышел.*?время сессии:\s+(\d{2}):(\d{2}):(\d{2})/i;
 
-  // Диапазон по дате
-  const startDate = new Date(dateFrom + 'T00:00:00');
-  const endDate = new Date(dateTo + 'T23:59:59');
+  // Флаг фильтрации по дате
+  const filterByDate = dateFrom && dateTo;
+  const startDate = filterByDate ? new Date(dateFrom + 'T00:00:00') : null;
+  const endDate = filterByDate ? new Date(dateTo + 'T23:59:59') : null;
 
   // Время в секундах от начала суток
   const [tfH, tfM, tfS = 0] = timeFrom.split(':').map(Number);
@@ -107,8 +104,8 @@ calcBtn.addEventListener('click', () => {
       continue;
     }
 
-    // Фильтрация по дате выхода (без учёта времени начала)
-    if (exitTime < startDate || exitTime > endDate) {
+    // Фильтрация по дате выхода, если даты указаны
+    if (filterByDate && (exitTime < startDate || exitTime > endDate)) {
       debug.push(`Сессия ${nick} (${exitTime.toISOString()}): пропущена, вне диапазона дат`);
       continue;
     }
@@ -159,7 +156,7 @@ calcBtn.addEventListener('click', () => {
     html += `<details style="margin-top:10px"><summary>Строки не распознаны (${rejected.length})</summary><pre>${escapeHtml(rejected.join('\n'))}</pre></details>`;
   }
 
-  // Отладочная информация (можно убрать)
+  // Отладочная информация
   if (debug.length) {
     html += `<details style="margin-top:10px"><summary>Отладка</summary><pre>${escapeHtml(debug.join('\n'))}</pre></details>`;
   }
