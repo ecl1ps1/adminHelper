@@ -45,13 +45,13 @@ document.getElementById('logsInput').addEventListener('input', () => {
   const lines = raw.split(/\r?\n/).filter(Boolean);
   const dates = [];
 
-  const lineRegex = /^(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2}:\d{2}).*?Игрок\s+(.+?)\s+вышел.*?время сессии:\s+(\d{2}):(\d{2}):(\d{2})/i;
+  const lineRegex = /^(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2}:\d{2}).*?Игрок\s+(.+?)\s+вышел с сервера.*?время сессии:\s+(\d{2}):(\d{2}):(\d{2})/i;
 
   for (const line of lines) {
     const m = line.match(lineRegex);
     if (m) {
       const [_, d, t] = m;
-      const dt = new Date(`${d}T${t}`);
+      const dt = new Date(`${d}T${t}Z`); // Use UTC to avoid timezone issues
       if (!isNaN(dt)) dates.push(dt);
     }
   }
@@ -67,6 +67,7 @@ document.getElementById('logsInput').addEventListener('input', () => {
 // --- Online calc ---
 const calcBtn = document.getElementById('calcBtn');
 const resultsEl = document.getElementById('results');
+const chartsContainer = document.getElementById('chartsContainer');
 
 calcBtn.addEventListener('click', () => {
   const raw = document.getElementById('logsInput').value.trim();
@@ -81,11 +82,11 @@ calcBtn.addEventListener('click', () => {
   }
 
   const lines = raw.split(/\r?\n/).filter(Boolean);
-  const lineRegex = /^(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2}:\d{2}).*?Игрок\s+(.+?)\s+вышел.*?время сессии:\s+(\d{2}):(\d{2}):(\d{2})/i;
+  const lineRegex = /^(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2}:\d{2}).*?Игрок\s+(.+?)\s+вышел с сервера.*?время сессии:\s+(\d{2}):(\d{2}):(\d{2})/i;
 
   const filterByDate = dateFrom && dateTo;
-  const startDate = filterByDate ? new Date(dateFrom + 'T00:00:00') : null;
-  const endDate = filterByDate ? new Date(dateTo + 'T23:59:59') : null;
+  const startDate = filterByDate ? new Date(dateFrom + 'T00:00:00Z') : null;
+  const endDate = filterByDate ? new Date(dateTo + 'T23:59:59Z') : null;
 
   const [tfH, tfM, tfS = 0] = timeFrom.split(':').map(Number);
   const [ttH, ttM, ttS = 0] = timeTo.split(':').map(Number);
@@ -95,6 +96,7 @@ calcBtn.addEventListener('click', () => {
   let totalSeconds = 0;
   let sessions = 0;
   const players = new Map(); // ник -> { seconds, sessions }
+  const playerDaily = new Map(); // ник -> { date -> seconds }
   const rejected = [];
   const debug = [];
 
@@ -106,46 +108,110 @@ calcBtn.addEventListener('click', () => {
     }
 
     const [_, d, t, nick, hh, mm, ss] = m;
-    const exitTime = new Date(`${d}T${t}`);
+    const exitTime = new Date(`${d}T${t}Z`); // Use UTC
     if (isNaN(exitTime)) {
       rejected.push(line);
-      continue;
-    }
-
-    if (filterByDate && (exitTime < startDate || exitTime > endDate)) {
-      debug.push(`Сессия ${nick} (${exitTime.toISOString()}): пропущена, вне диапазона дат`);
       continue;
     }
 
     const sessionSeconds = (+hh) * 3600 + (+mm) * 60 + (+ss);
     const sessionStart = new Date(exitTime.getTime() - sessionSeconds * 1000);
 
-    const rangeStart = new Date(exitTime);
-    rangeStart.setHours(0, 0, 0, 0);
-    rangeStart.setSeconds(rangeStart.getSeconds() + fromSeconds);
+    debug.push(`Обработка сессии ${nick}: начало ${sessionStart.toISOString()}, конец ${exitTime.toISOString()}, длительность ${sessionSeconds} сек`);
 
-    const rangeEnd = new Date(exitTime);
-    rangeEnd.setHours(0, 0, 0, 0);
-    rangeEnd.setSeconds(rangeEnd.getSeconds() + toSeconds);
-
-    const actualStart = new Date(Math.max(sessionStart.getTime(), rangeStart.getTime()));
-    const actualEnd = new Date(Math.min(exitTime.getTime(), rangeEnd.getTime()));
-
-    let secondsInWindow = 0;
-    if (actualEnd > actualStart) {
-      secondsInWindow = Math.floor((actualEnd - actualStart) / 1000);
-      debug.push(`Сессия ${nick} (${sessionStart.toISOString()} - ${exitTime.toISOString()}): ${secondsInWindow} сек`);
-      totalSeconds += secondsInWindow;
-      sessions++;
-
-      if (!players.has(nick)) {
-        players.set(nick, { seconds: 0, sessions: 0 });
-      }
-      players.get(nick).seconds += secondsInWindow;
-      players.get(nick).sessions += 1;
-    } else {
-      debug.push(`Сессия ${nick} (${sessionStart.toISOString()} - ${exitTime.toISOString()}): пропущена, вне окна времени`);
+    if (filterByDate && (exitTime < startDate || sessionStart > endDate)) {
+      debug.push(`Сессия ${nick} (${sessionStart.toISOString()} - ${exitTime.toISOString()}): пропущена, полностью вне диапазона дат ${dateFrom} - ${dateTo}`);
+      continue;
     }
+
+    // Initialize player data
+    if (!players.has(nick)) {
+      players.set(nick, { seconds: 0, sessions: 0 });
+      playerDaily.set(nick, new Map());
+    }
+
+    // Process each day in the session
+    const startDay = new Date(sessionStart);
+    startDay.setUTCHours(0, 0, 0, 0);
+    const endDay = new Date(exitTime);
+    endDay.setUTCHours(0, 0, 0, 0);
+
+    let currentDay = new Date(startDay);
+    let sessionCounted = false;
+
+    while (currentDay <= endDay) {
+      // Skip days outside the date range
+      if (filterByDate && (currentDay < startDate || currentDay > endDate)) {
+        debug.push(`Сессия ${nick} (${sessionStart.toISOString()} - ${exitTime.toISOString()}): пропущен день ${currentDay.toISOString().slice(0, 10)}, вне диапазона дат ${dateFrom} - ${dateTo}`);
+        currentDay.setUTCDate(currentDay.getUTCDate() + 1);
+        continue;
+      }
+
+      // Define the start and end of the current day
+      const dayStart = new Date(currentDay);
+      const dayEnd = new Date(currentDay);
+      dayEnd.setUTCHours(23, 59, 59, 999);
+
+      // Calculate session time within this day
+      const dayStartTime = new Date(Math.max(sessionStart.getTime(), dayStart.getTime()));
+      const dayEndTime = new Date(Math.min(exitTime.getTime(), dayEnd.getTime()));
+
+      // Apply time filter for the current day
+      const rangeStart = new Date(currentDay);
+      rangeStart.setUTCSeconds(fromSeconds);
+      const rangeEnd = new Date(currentDay);
+      rangeEnd.setUTCSeconds(toSeconds);
+
+      const actualStart = new Date(Math.max(dayStartTime.getTime(), rangeStart.getTime()));
+      const actualEnd = new Date(Math.min(dayEndTime.getTime(), rangeEnd.getTime()));
+
+      let secondsInWindow = 0;
+      if (actualEnd > actualStart) {
+        secondsInWindow = Math.floor((actualEnd - actualStart) / 1000);
+
+        totalSeconds += secondsInWindow;
+        players.get(nick).seconds += secondsInWindow;
+
+        if (!sessionCounted && currentDay.getTime() === startDay.getTime()) {
+          players.get(nick).sessions += 1;
+          sessions++;
+          sessionCounted = true;
+          debug.push(`Сессия ${nick} (${sessionStart.toISOString()} - ${exitTime.toISOString()}): учтено ${secondsInWindow} сек на ${currentDay.toISOString().slice(0, 10)} (новая сессия)`);
+        } else {
+          debug.push(`Сессия ${nick} (${sessionStart.toISOString()} - ${exitTime.toISOString()}): учтено ${secondsInWindow} сек на ${currentDay.toISOString().slice(0, 10)}`);
+        }
+
+        // Aggregate daily data
+        const dateStr = currentDay.toISOString().slice(0, 10);
+        const dailyMap = playerDaily.get(nick);
+        dailyMap.set(dateStr, (dailyMap.get(dateStr) || 0) + secondsInWindow);
+      } else {
+        debug.push(`Сессия ${nick} (${sessionStart.toISOString()} - ${exitTime.toISOString()}): пропущена для ${currentDay.toISOString().slice(0, 10)}, вне временного окна ${timeFrom}-${timeTo}`);
+      }
+
+      // Move to the next day
+      currentDay.setUTCDate(currentDay.getUTCDate() + 1);
+    }
+  }
+
+  // Ensure all days in the date range are included in playerDaily
+  if (filterByDate) {
+    for (const [nick, dailyMap] of playerDaily) {
+      let currentDate = new Date(startDate);
+      while (currentDate <= endDate) {
+        const dateStr = currentDate.toISOString().slice(0, 10);
+        if (!dailyMap.has(dateStr)) {
+          dailyMap.set(dateStr, 0);
+          debug.push(`Добавлен день ${dateStr} для ${nick} с 0 сек онлайна`);
+        }
+        currentDate.setUTCDate(currentDate.getUTCDate() + 1);
+      }
+    }
+  }
+
+  // Debug playerDaily contents
+  for (const [nick, dailyMap] of playerDaily) {
+    debug.push(`Содержимое playerDaily для ${nick}: ${JSON.stringify([...dailyMap.entries()])}`);
   }
 
   const human = secondsToHMS(totalSeconds);
@@ -161,7 +227,7 @@ calcBtn.addEventListener('click', () => {
 
   let perPlayerHTML = `<details style="margin-top:10px"><summary>Статистика по игрокам (${players.size})</summary><table border="1" cellpadding="4" cellspacing="0"><tr><th>Ник</th><th>Сессий</th><th>Онлайн</th><th>Средняя сессия</th></tr>`;
   for (const [nick, data] of [...players.entries()].sort((a, b) => b[1].seconds - a[1].seconds)) {
-    const avgTime = secondsToHMS(Math.floor(data.seconds / data.sessions));
+    const avgTime = secondsToHMS(Math.floor(data.seconds / data.sessions || 0));
     perPlayerHTML += `<tr><td>${escapeHtml(nick)}</td><td>${data.sessions}</td><td>${secondsToHMS(data.seconds)}</td><td>${avgTime}</td></tr>`;
   }
   perPlayerHTML += `</table></details>`;
@@ -176,6 +242,72 @@ calcBtn.addEventListener('click', () => {
   }
 
   showResult(html, true);
+
+  // Clear previous charts
+  chartsContainer.innerHTML = '';
+
+  // Generate charts for each player
+  for (const [nick, dailyMap] of [...playerDaily.entries()].sort((a, b) => b[1].size - a[1].size)) {
+    // Include all dates from playerDaily that fall within or are processed, but respect date range
+    let dates = [...dailyMap.keys()];
+    if (filterByDate) {
+      dates = dates.filter(date => {
+        const d = new Date(date + 'T00:00:00Z');
+        return d >= startDate && d <= endDate;
+      });
+    }
+    dates.sort((a, b) => new Date(a) - new Date(b));
+    const hours = dates.map(date => (dailyMap.get(date) / 3600).toFixed(2));
+
+    debug.push(`Даты для графика ${nick}: ${JSON.stringify(dates)}`);
+
+    if (dates.length === 0) {
+      debug.push(`Пропущен график для ${nick}: нет дат в диапазоне ${dateFrom} - ${dateTo}`);
+      continue;
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.id = `chart-${nick.replace(/[^a-zA-Z0-9]/g, '')}`;
+    chartsContainer.appendChild(canvas);
+
+    // Create Chart.js chart
+    new Chart(canvas, {
+      type: 'line',
+      data: {
+        labels: dates,
+        datasets: [{
+          label: 'Онлайн в день (часы)',
+          data: hours,
+          borderColor: '#4f46e5',
+          backgroundColor: 'rgba(79, 70, 229, 0.2)',
+          fill: true,
+          tension: 0.4
+        }]
+      },
+      options: {
+        plugins: {
+          title: {
+            display: true,
+            text: `Онлайн игрока ${nick}`,
+            color: '#e6e6e6',
+            font: { size: 16 }
+          },
+          legend: { labels: { color: '#e6e6e6' } }
+        },
+        scales: {
+          x: {
+            title: { display: true, text: 'Дата', color: '#e6e6e6' },
+            ticks: { color: '#9aa0ac' }
+          },
+          y: {
+            title: { display: true, text: 'Онлайн (часы)', color: '#e6e6e6' },
+            ticks: { color: '#9aa0ac' },
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  }
 });
 
 // --- Utils ---
