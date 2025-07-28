@@ -1,3 +1,4 @@
+/* ...твои переменные остаются как есть */
 :root {
   --bg: #0f1117;
   --fg: #e6e6e6;
@@ -7,7 +8,9 @@
   --radius: 10px;
   --font: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, sans-serif;
 }
+
 * { box-sizing: border-box; }
+
 body {
   margin: 0;
   font-family: var(--font);
@@ -15,17 +18,57 @@ body {
   color: var(--fg);
   display: flex;
   min-height: 100vh;
+  flex-direction: row;
 }
+
 aside {
   width: 240px;
   border-right: 1px solid var(--border);
   padding: 16px;
+  background: #12151d;
 }
+
 main {
   flex: 1;
   padding: 24px;
 }
+
+/* ---------------------------- */
+/* Адаптив — мобилки: <768px   */
+/* ---------------------------- */
+@media (max-width: 768px) {
+  body {
+    flex-direction: column;
+  }
+
+  aside {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding: 12px;
+  }
+
+  main {
+    padding: 16px;
+  }
+
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  nav a {
+    flex: 1 1 auto;
+    text-align: center;
+    padding: 10px;
+    margin: 0;
+  }
+}
+
+/* Остальные стили без изменений */
 h1, h2, h3 { margin: 0 0 16px; }
+
 nav a {
   display: block;
   padding: 10px 12px;
@@ -34,11 +77,14 @@ nav a {
   color: var(--fg);
   text-decoration: none;
 }
+
 nav a.active, nav a:hover {
   background: var(--accent);
 }
+
 .tab { display: none; }
 .tab.active { display: block; }
+
 .card {
   background: #151922;
   border: 1px solid var(--border);
@@ -46,12 +92,14 @@ nav a.active, nav a:hover {
   padding: 16px;
   margin-bottom: 24px;
 }
+
 label {
   display: block;
   margin: 0 0 6px;
   font-size: 0.9rem;
   color: var(--muted);
 }
+
 input[type="text"],
 input[type="date"],
 input[type="time"],
@@ -64,18 +112,21 @@ textarea {
   padding: 10px 12px;
   font-family: var(--font);
 }
+
 textarea {
   min-height: 260px;
   resize: vertical;
   line-height: 1.4;
   white-space: pre;
 }
+
 .row {
   display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 12px;
   margin-bottom: 12px;
 }
+
 button {
   background: var(--accent);
   border: none;
@@ -85,10 +136,12 @@ button {
   cursor: pointer;
   font-weight: 600;
 }
+
 button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
 .results {
   margin-top: 16px;
   padding: 12px;
@@ -97,5 +150,11 @@ button:disabled {
   border-radius: 6px;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
+
 .muted { color: var(--muted); }
-code { background:#11141b; padding:2px 4px; border-radius:4px; }
+
+code {
+  background: #11141b;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
