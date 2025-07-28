@@ -44,7 +44,7 @@ const initial = location.hash.replace('#', '');
 if (initial) {
   activateTab(initial);
 } else {
-  activateTab('dashboard');
+  activateTab('online');
 }
 
 // --- Online calc ---
