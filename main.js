@@ -45,32 +45,20 @@ document.getElementById("logsInput").addEventListener("input", () => {
   const lines = raw.split(/\r?\n/).filter(Boolean);
   const dates = [];
 
-  // Regex for standard format
+  // Regex для стандартного формата
   const standardRegex =
     /^(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2}:\d{2}).*?Игрок\s+(.+?)\s+вышел с сервера.*?время сессии:\s+(\d{2}):(\d{2}):(\d{2})/i;
-  // Regex for alternative format date line
+  // Regex для альтернативной строки с датой
   const altDateRegex =
     /^\d+\s*\|\s*(\d{2}\.\d{2}\.\d{4})\s+(\d{2}:\d{2}:\d{2})$/;
-  // Regex for alternative format session line
+  // Regex для альтернативной строки сессии
   const altSessionRegex =
     /^Игрок\s+(.+?)\s+вышел с сервера.*?время сессии:\s+(\d{2}):(\d{2}):(\d{2})/i;
-
-  let lastDateTime = null;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
 
-    // Check for alternative format date line
-    const dateMatch = line.match(altDateRegex);
-    if (dateMatch) {
-      const [_, date, time] = dateMatch;
-      // Convert DD.MM.YYYY to YYYY-MM-DD
-      const [day, month, year] = date.split(".");
-      lastDateTime = `${year}-${month}-${day} ${time}`;
-      continue;
-    }
-
-    // Check for standard format
+    // Проверка стандартного формата
     let m = line.match(standardRegex);
     if (m) {
       const [_, d, t] = m;
@@ -79,14 +67,27 @@ document.getElementById("logsInput").addEventListener("input", () => {
       continue;
     }
 
-    // Check for alternative format session line
+    // Проверка строки сессии альтернативного формата
     m = line.match(altSessionRegex);
-    if (m && lastDateTime) {
+    if (m) {
       const [_, nick, hh, mm, ss] = m;
-      // Combine with last known date-time
-      const [d, t] = lastDateTime.split(" ");
-      const dt = new Date(`${d}T${t}Z`);
-      if (!isNaN(dt)) dates.push(dt);
+      // Ищем следующую строку с датой
+      let nextDateTime = null;
+      for (let j = i + 1; j < lines.length; j++) {
+        const nextLine = lines[j].trim();
+        const dateMatch = nextLine.match(altDateRegex);
+        if (dateMatch) {
+          const [_, date, time] = dateMatch;
+          const [day, month, year] = date.split(".");
+          nextDateTime = `${year}-${month}-${day} ${time}`;
+          break;
+        }
+      }
+      if (nextDateTime) {
+        const [d, t] = nextDateTime.split(" ");
+        const dt = new Date(`${d}T${t}Z`);
+        if (!isNaN(dt)) dates.push(dt);
+      }
     }
   }
 
@@ -118,7 +119,7 @@ calcBtn.addEventListener("click", () => {
   }
 
   const lines = raw.split(/\r?\n/).filter(Boolean);
-  // Regex for both formats
+  // Regex для обоих форматов
   const standardRegex =
     /^(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2}:\d{2}).*?Игрок\s+(.+?)\s+вышел с сервера.*?время сессии:\s+(\d{2}):(\d{2}):(\d{2})/i;
   const altDateRegex =
@@ -142,22 +143,10 @@ calcBtn.addEventListener("click", () => {
   const rejected = [];
   const debug = [];
 
-  let lastDateTime = null;
-
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
 
-    // Check for alternative format date line
-    const dateMatch = line.match(altDateRegex);
-    if (dateMatch) {
-      const [_, date, time] = dateMatch;
-      const [day, month, year] = date.split(".");
-      lastDateTime = `${year}-${month}-${day} ${time}`;
-      debug.push(`Найдена дата для альтернативного формата: ${lastDateTime}`);
-      continue;
-    }
-
-    // Check for standard format
+    // Проверка стандартного формата
     let m = line.match(standardRegex);
     if (m) {
       const [_, d, t, nick, hh, mm, ss] = m;
@@ -182,13 +171,13 @@ calcBtn.addEventListener("click", () => {
         continue;
       }
 
-      // Initialize player data
+      // Инициализация данных игрока
       if (!players.has(nick)) {
         players.set(nick, { seconds: 0, sessions: 0 });
         playerDaily.set(nick, new Map());
       }
 
-      // Process each day in the session
+      // Обработка каждого дня в сессии
       const startDay = new Date(sessionStart);
       startDay.setUTCHours(0, 0, 0, 0);
       const endDay = new Date(exitTime);
@@ -270,16 +259,34 @@ calcBtn.addEventListener("click", () => {
       continue;
     }
 
-    // Check for alternative format session line
+    // Проверка строки сессии альтернативного формата
     m = line.match(altSessionRegex);
-    if (m && lastDateTime) {
+    if (m) {
       const [_, nick, hh, mm, ss] = m;
-      const [d, t] = lastDateTime.split(" ");
+      // Ищем следующую строку с датой
+      let nextDateTime = null;
+      for (let j = i + 1; j < lines.length; j++) {
+        const nextLine = lines[j].trim();
+        const dateMatch = nextLine.match(altDateRegex);
+        if (dateMatch) {
+          const [_, date, time] = dateMatch;
+          const [day, month, year] = date.split(".");
+          nextDateTime = `${year}-${month}-${day} ${time}`;
+          break;
+        }
+      }
+      if (!nextDateTime) {
+        rejected.push(line);
+        debug.push(`Нет даты после строки сессии: ${line}`);
+        continue;
+      }
+
+      const [d, t] = nextDateTime.split(" ");
       const exitTime = new Date(`${d}T${t}Z`);
       if (isNaN(exitTime)) {
         rejected.push(line);
         debug.push(
-          `Некорректная дата для альтернативной строки: ${line}, использовалась дата ${lastDateTime}`
+          `Некорректная дата для альтернативной строки: ${line}, использовалась дата ${nextDateTime}`
         );
         continue;
       }
@@ -384,12 +391,12 @@ calcBtn.addEventListener("click", () => {
       continue;
     }
 
-    // If line doesn't match any format, reject it
+    // Если строка не соответствует ни одному формату, отклоняем её
     rejected.push(line);
     debug.push(`Строка не распознана: ${line}`);
   }
 
-  // Ensure all days in the date range are included in playerDaily
+  // Убедимся, что все дни в диапазоне дат включены в playerDaily
   if (filterByDate) {
     for (const [nick, dailyMap] of playerDaily) {
       let currentDate = new Date(startDate);
@@ -404,7 +411,7 @@ calcBtn.addEventListener("click", () => {
     }
   }
 
-  // Debug playerDaily contents
+  // Отладка содержимого playerDaily
   for (const [nick, dailyMap] of playerDaily) {
     debug.push(
       `Содержимое playerDaily для ${nick}: ${JSON.stringify([
@@ -433,11 +440,9 @@ calcBtn.addEventListener("click", () => {
     const avgSessionTime = secondsToHMS(
       Math.floor(data.seconds / data.sessions || 0)
     );
-    // Подсчет количества дней с ненулевым онлайном
     const activeDays = [...playerDaily.get(nick).values()].filter(
       (seconds) => seconds > 0
     ).length;
-    // Средний онлайн за день
     const avgDailyOnline =
       activeDays > 0
         ? secondsToHMS(Math.floor(data.seconds / activeDays))
@@ -465,10 +470,10 @@ calcBtn.addEventListener("click", () => {
 
   showResult(html, true);
 
-  // Clear previous charts
+  // Очистка предыдущих графиков
   chartsContainer.innerHTML = "";
 
-  // Generate chart
+  // Генерация графика
   if (filterByDate && playerDaily.size > 0) {
     const canvas = document.createElement("canvas");
     canvas.id = "playersChart";
