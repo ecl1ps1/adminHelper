@@ -1,4 +1,44 @@
-// --- Tabs ---
+const canvas = document.getElementById('stars');
+const ctx = canvas.getContext('2d');
+
+let width, height, stars;
+
+function resize() {
+  width = canvas.width = window.innerWidth;
+  height = canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resize);
+resize();
+
+function createStars(count) {
+  stars = [];
+  for (let i = 0; i < count; i++) {
+    stars.push({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      radius: Math.random() * 1.2 + 0.2,
+      speedY: Math.random() * 0.3 + 0.05,
+      alpha: Math.random() * 0.5 + 0.3
+    });
+  }
+}
+
+function drawStars() {
+  ctx.clearRect(0, 0, width, height);
+  for (let s of stars) {
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.radius, 0, 2 * Math.PI);
+    ctx.fillStyle = `rgba(255,255,255,${s.alpha})`;
+    ctx.fill();
+    s.y += s.speedY;
+    if (s.y > height) s.y = 0;
+  }
+  requestAnimationFrame(drawStars);
+}
+
+createStars(150); // можно увеличить до 300+
+drawStars();
+
 const links = document.querySelectorAll("nav a[data-tab]");
 const tabs = document.querySelectorAll(".tab");
 
