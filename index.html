@@ -9,6 +9,9 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png"/>
 </head>
 <body>
+  <div id="preloader">
+  <div class="spinner"></div>
+</div>
   <aside>
     <nav>
       <a href="#dashboard" data-tab="dashboard">Дашборд</a>
@@ -83,6 +86,12 @@
       </div>
     </div>
   </main>
+<script>
+  window.addEventListener('load', () => {
+    const preloader = document.getElementById('preloader');
+    preloader.classList.add('hidden');
+  });
+</script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="main.js"></script>
 </body>

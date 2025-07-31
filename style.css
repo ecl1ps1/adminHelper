@@ -9,7 +9,9 @@
   --font: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, sans-serif;
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 body {
   margin: 0;
@@ -67,7 +69,11 @@ main {
 }
 
 /* Остальные стили без изменений */
-h1, h2, h3 { margin: 0 0 16px; }
+h1,
+h2,
+h3 {
+  margin: 0 0 16px;
+}
 
 nav a {
   display: block;
@@ -78,12 +84,17 @@ nav a {
   text-decoration: none;
 }
 
-nav a.active, nav a:hover {
+nav a.active,
+nav a:hover {
   background: var(--accent);
 }
 
-.tab { display: none; }
-.tab.active { display: block; }
+.tab {
+  display: none;
+}
+.tab.active {
+  display: block;
+}
 
 .card {
   background: #151922;
@@ -137,6 +148,37 @@ button {
   font-weight: 600;
 }
 
+#calcBtn {
+  background: var(--accent);
+  color: #fff;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.3s ease,
+    filter 0.3s ease;
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+}
+
+/* Наведение: подсветка + увеличение */
+#calcBtn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(79, 70, 229, 0.4); /* мягкая фиолетовая тень */
+  filter: brightness(1.1);
+}
+
+/* Нажатие: сжатие + убираем тень */
+#calcBtn:active {
+  transform: scale(0.97);
+  box-shadow: 0 0 6px rgba(79, 70, 229, 0.2);
+  filter: brightness(0.95);
+}
+
+
 button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -148,10 +190,13 @@ button:disabled {
   background: #11141b;
   border: 1px solid var(--border);
   border-radius: 6px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
 }
 
-.muted { color: var(--muted); }
+.muted {
+  color: var(--muted);
+}
 
 code {
   background: #11141b;
@@ -162,4 +207,38 @@ code {
 #chartsContainer canvas {
   max-width: 100%;
   margin-bottom: 16px;
+}
+#preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+#preloader.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--border);
+  border-top: 4px solid var(--accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
