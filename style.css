@@ -222,6 +222,11 @@ code {
   max-width: 100%;
   margin-bottom: 16px;
 }
+
+.hidden {
+  display: none;
+}
+
 #preloader {
   position: fixed;
   top: 0;

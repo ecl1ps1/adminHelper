@@ -1,5 +1,8 @@
 const canvas = document.getElementById('stars');
 const ctx = canvas.getContext('2d');
+const links = document.querySelectorAll("nav a[data-tab]");
+const tabs = document.querySelectorAll(".tab");
+const graph = document.querySelector('#chartsContainer');
 
 let width, height, stars;
 
@@ -38,9 +41,6 @@ function drawStars() {
 
 createStars(150); // можно увеличить до 300+
 drawStars();
-
-const links = document.querySelectorAll("nav a[data-tab]");
-const tabs = document.querySelectorAll(".tab");
 
 function activateTab(tabId) {
   links.forEach((link) => link.classList.remove("active"));
@@ -539,6 +539,8 @@ calcBtn.addEventListener("click", () => {
         };
       }
     );
+
+    graph.classList.remove('hidden');
 
     new Chart(canvas, {
       type: "line",
