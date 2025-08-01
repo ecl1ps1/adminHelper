@@ -604,3 +604,34 @@ function escapeHtml(str) {
       }[m])
   );
 }
+
+
+// ... предыдущий код без изменений ...
+
+const logTypeSwitcher = document.getElementById("logTypeSwitcher");
+const logsInput = document.getElementById("logsInput");
+const logModeLabel = document.getElementById("logModeLabel");
+
+const placeholders = {
+  normal: `2025-07-26 21:07:16  Игрок Samuel_Vanore вышел с сервера, время сессии: 00:01:24, авторизация: Есть (Quit)
+2025-07-26 19:57:43  Игрок Samuel_Vanore вышел с сервера, время сессии: 00:29:26, авторизация: Есть (Timeout)`,
+  alt: `Игрок Vitaly_Smirnov вышел с сервера, время сессии: 00:07:30, авторизация: Есть (Timeout)
+17 | 26.07.2025 21:17:13
+
+Игрок Vitaly_Smirnov вышел с сервера, время сессии: 00:04:12, авторизация: Есть (Quit)
+21 | 26.07.2025 21:56:35`
+};
+
+function updateLogModeUI() {
+  const isAlt = logTypeSwitcher.checked;
+  document.body.classList.toggle("alt-mode", isAlt);
+  logModeLabel.textContent = isAlt ? "Лидерские логи" : "Основные логи";
+  logsInput.placeholder = isAlt ? placeholders.alt : placeholders.normal;
+}
+
+logTypeSwitcher.addEventListener("change", updateLogModeUI);
+
+// Установить начальный плейсхолдер
+updateLogModeUI();
+
+// Остальной код main.js остаётся без изменений, включая обработку логов и расчёты
