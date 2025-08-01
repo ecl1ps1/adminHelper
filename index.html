@@ -6,8 +6,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Helper</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png"/>
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png"/>
+  <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon.png"/>
+  <link rel="icon" type="image/png" sizes="16x16" href="./images/favicon.png"/>
+
+  <script>
+  const favicon = document.createElement('link');
+  favicon.rel = 'icon';
+  favicon.href = 'https://arizona-rp.com/favicon-16x16.png';
+  favicon.type = 'image/png';
+  document.head.appendChild(favicon);
+</script>
 </head>
 <body>
   <canvas id="stars"></canvas>
