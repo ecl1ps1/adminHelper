@@ -1,328 +1,423 @@
+/* ----------------------------------- */
+/* Корневые переменные                */
+/* ----------------------------------- */
+/* Определение кастомных переменных для единообразной темы оформления */
 :root {
-  --bg: #0f1117;
-  --fg: #e6e6e6;
-  --muted: #9aa0ac;
-  --accent: #4f46e5;
-  --border: #2a2f3a;
-  --radius: 10px;
-  --font: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, sans-serif;
+  --bg: #0f1117; /* Цвет фона */
+  --fg: #e6e6e6; /* Цвет текста */
+  --muted: #9aa0ac; /* Приглушённый цвет для второстепенного текста */
+  --accent: #4f46e5; /* Акцентный цвет для интерактивных элементов */
+  --border: #2a2f3a; /* Цвет границ */
+  --radius: 10px; /* Радиус скругления углов */
+  --font: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, sans-serif; /* Стек шрифтов */
 }
 
+/* ----------------------------------- */
+/* Глобальный сброс                   */
+/* ----------------------------------- */
+/* Устанавливает box-sizing для всех элементов, чтобы обеспечить предсказуемый расчёт размеров */
 * {
   box-sizing: border-box;
 }
 
+/* ----------------------------------- */
+/* Стили для body                     */
+/* ----------------------------------- */
+/* Основные стили для всей страницы, включая шрифт, фон и раскладку */
 body {
-  margin: 0;
-  font-family: var(--font);
-  background: var(--bg);
-  color: var(--fg);
-  display: flex;
-  min-height: 100vh;
-  flex-direction: row;
+  margin: 0; /* Убирает внешние отступы */
+  font-family: var(--font); /* Использует заданный стек шрифтов */
+  background: var(--bg); /* Устанавливает цвет фона */
+  color: var(--fg); /* Устанавливает цвет текста */
+  display: flex; /* Использует flexbox для раскладки */
+  min-height: 100vh; /* Минимальная высота — вся высота области просмотра */
+  flex-direction: row; /* Элементы располагаются в ряд по умолчанию */
 }
 
+/* ----------------------------------- */
+/* Фоновый канвас (звёзды)            */
+/* ----------------------------------- */
+/* Стили для фиксированного фонового элемента, вероятно, для эффекта звёздного неба */
 #stars {
-  position: fixed;
+  position: fixed; /* Фиксированное положение */
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100%; /* Занимает всю ширину */
+  height: 100%; /* Занимает всю высоту */
   display: block;
-  z-index: -1;
-  pointer-events: none;
-  background: var(--bg); 
+  z-index: -1; /* Помещает за остальным контентом */
+  pointer-events: none; /* Отключает взаимодействие с элементом */
+  background: var(--bg); /* Фон совпадает с основным */
 }
 
-
-
+/* ----------------------------------- */
+/* Боковая панель (aside)             */
+/* ----------------------------------- */
+/* Стили для боковой панели навигации */
 aside {
-  width: 240px;
-  border-right: 1px solid var(--border);
-  padding: 16px;
-  background: #12151d;
+  width: 240px; /* Фиксированная ширина */
+  border-right: 1px solid var(--border); /* Граница справа */
+  padding: 16px; /* Внутренние отступы */
+  background: #12151d; /* Тёмный фон для панели */
 }
 
+/* ----------------------------------- */
+/* Основной контент (main)            */
+/* ----------------------------------- */
+/* Стили для основного содержимого страницы */
 main {
-  flex: 1;
-  padding: 24px;
+  flex: 1; /* Занимает всё доступное пространство */
+  padding: 24px; /* Внутренние отступы */
 }
 
-/* ---------------------------- */
-/* Адаптив — мобилки: <768px   */
-/* ---------------------------- */
+/* ----------------------------------- */
+/* Адаптивные стили (<768px)          */
+/* ----------------------------------- */
+/* Адаптация раскладки и стилей для мобильных устройств */
 @media (max-width: 768px) {
   body {
-    flex-direction: column;
+    flex-direction: column; /* Переключает на колонную раскладку */
   }
 
   aside {
-    width: 100%;
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-    padding: 12px;
+    width: 100%; /* Боковая панель на всю ширину */
+    border-right: none; /* Убирает правую границу */
+    border-bottom: 1px solid var(--border); /* Добавляет нижнюю границу */
+    padding: 12px; /* Уменьшенные отступы */
   }
 
   main {
-    padding: 16px;
+    padding: 16px; /* Уменьшенные отступы для основного контента */
   }
 
   nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    display: flex; /* Гибкая раскладка для навигации */
+    flex-wrap: wrap; /* Перенос элементов при нехватке места */
+    gap: 8px; /* Отступы между элементами */
   }
 
   nav a {
-    flex: 1 1 auto;
-    text-align: center;
-    padding: 10px;
-    margin: 0;
+    flex: 1 1 auto; /* Элементы занимают доступное пространство */
+    text-align: center; /* Центрированный текст */
+    padding: 10px; /* Уменьшенные отступы */
+    margin: 0; /* Убирает внешние отступы */
   }
 }
 
-/* Остальные стили без изменений */
+/* ----------------------------------- */
+/* Стили заголовков                   */
+/* ----------------------------------- */
+/* Стили для заголовков h1, h2, h3 */
 h1,
 h2,
 h3 {
-  margin: 0 0 16px;
+  margin: 0 0 16px; /* Отступ снизу для заголовков */
 }
 
+/* ----------------------------------- */
+/* Навигационные ссылки               */
+/* ----------------------------------- */
+/* Стили для ссылок в навигации */
 nav a {
-  display: block;
-  padding: 10px 12px;
-  border-radius: 6px;
-  margin-bottom: 6px;
-  color: var(--fg);
-  text-decoration: none;
+  display: block; /* Ссылки как блочные элементы */
+  padding: 10px 12px; /* Внутренние отступы */
+  border-radius: 6px; /* Скруглённые углы */
+  margin-bottom: 6px; /* Отступ снизу */
+  color: var(--fg); /* Цвет текста */
+  text-decoration: none; /* Убирает подчёркивание */
 }
 
 nav a.active,
 nav a:hover {
-  background: var(--accent);
+  background: var(--accent); /* Акцентный фон при наведении или активном состоянии */
 }
 
+/* ----------------------------------- */
+/* Вкладки (tabs)                     */
+/* ----------------------------------- */
+/* Стили для вкладок (переключение контента) */
 .tab {
-  display: none;
+  display: none; /* Скрывает неактивные вкладки */
 }
 .tab.active {
-  display: block;
+  display: block; /* Показывает активную вкладку */
 }
 
+/* ----------------------------------- */
+/* Карточки (card)                    */
+/* ----------------------------------- */
+/* Стили для карточек с контентом */
 .card {
-  background: #151922;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px;
-  margin-bottom: 24px;
+  background: #151922; /* Тёмный фон карточки */
+  border: 1px solid var(--border); /* Граница */
+  border-radius: var(--radius); /* Скруглённые углы */
+  padding: 16px; /* Внутренние отступы */
+  margin-bottom: 24px; /* Отступ снизу */
 }
 
+/* ----------------------------------- */
+/* Метки (label)                      */
+/* ----------------------------------- */
+/* Стили для меток форм */
 label {
-  display: block;
-  margin: 0 0 6px;
-  font-size: 0.9rem;
-  color: var(--muted);
+  display: block; /* Блочное отображение */
+  margin: 0 0 6px; /* Отступ снизу */
+  font-size: 0.9rem; /* Меньший размер шрифта */
+  color: var(--muted); /* Приглушённый цвет */
 }
 
+/* ----------------------------------- */
+/* Поля ввода и текстовая область      */
+/* ----------------------------------- */
+/* Стили для текстовых полей и временных/датовых полей */
 input[type="text"],
 input[type="date"],
 input[type="time"],
 textarea {
-  width: 100%;
-  background: #1b202a;
-  border: 1px solid var(--border);
-  color: var(--fg);
-  border-radius: 6px;
-  padding: 10px 12px;
-  font-family: var(--font);
+  width: 100%; /* Полная ширина */
+  background: #1b202a; /* Тёмный фон */
+  border: 1px solid var(--border); /* Граница */
+  color: var(--fg); /* Цвет текста */
+  border-radius: 6px; /* Скруглённые углы */
+  padding: 10px 12px; /* Внутренние отступы */
+  font-family: var(--font); /* Шрифт */
 }
 
+/* Дополнительные стили для текстовой области */
 textarea {
-  min-height: 260px;
-  resize: vertical;
-  line-height: 1.4;
-  white-space: pre;
+  min-height: 260px; /* Минимальная высота */
+  resize: vertical; /* Только вертикальное изменение размера */
+  line-height: 1.4; /* Межстрочный интервал */
+  white-space: pre; /* Сохраняет пробелы и переносы */
 }
 
+/* ----------------------------------- */
+/* Сетка для строк (row)              */
+/* ----------------------------------- */
+/* Стили для сетки с автоматической адаптацией колонок */
 .row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 12px;
-  margin-bottom: 12px;
+  display: grid; /* Использует grid-раскладку */
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Адаптивные колонки */
+  gap: 12px; /* Отступы между элементами */
+  margin-bottom: 12px; /* Отступ снизу */
 }
 
+/* ----------------------------------- */
+/* Общие стили кнопок                 */
+/* ----------------------------------- */
+/* Базовые стили для всех кнопок */
 button {
-  background: var(--accent);
-  border: none;
-  color: #fff;
-  padding: 12px 18px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
+  background: var(--accent); /* Акцентный фон */
+  border: none; /* Без границы */
+  color: #fff; /* Белый текст */
+  padding: 12px 18px; /* Внутренние отступы */
+  border-radius: 6px; /* Скруглённые углы */
+  cursor: pointer; /* Курсор указателя */
+  font-weight: 600; /* Жирный шрифт */
 }
 
+/* ----------------------------------- */
+/* Стили для кнопки #calcBtn          */
+/* ----------------------------------- */
+/* Специфические стили для кнопки с id calcBtn */
 #calcBtn {
-  background: var(--accent);
-  color: #fff;
-  padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.3s ease,
-    filter 0.3s ease;
-  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  background: var(--accent); /* Акцентный фон */
+  color: #fff; /* Белый текст */
+  padding: 12px 24px; /* Увеличенные отступы */
+  border: none; /* Без границы */
+  border-radius: 8px; /* Скруглённые углы */
+  font-weight: 600; /* Жирный шрифт */
+  font-size: 1rem; /* Размер шрифта */
+  cursor: pointer; /* Курсор указателя */
+  transition: transform 0.2s ease, box-shadow 0.3s ease, filter 0.3s ease; /* Анимации */
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0); /* Начальная тень отсутствует */
 }
 
-/* Наведение: подсветка + увеличение */
+/* Эффект наведения для calcBtn */
 #calcBtn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 12px rgba(79, 70, 229, 0.4); /* мягкая фиолетовая тень */
-  filter: brightness(1.1);
+  transform: scale(1.05); /* Увеличение размера */
+  box-shadow: 0 0 12px rgba(79, 70, 229, 0.4); /* Фиолетовая тень */
+  filter: brightness(1.1); /* Увеличение яркости */
 }
 
-/* Нажатие: сжатие + убираем тень */
+/* Эффект нажатия для calcBtn */
 #calcBtn:active {
-  transform: scale(0.97);
-  box-shadow: 0 0 6px rgba(79, 70, 229, 0.2);
-  filter: brightness(0.95);
+  transform: scale(0.97); /* Уменьшение размера */
+  box-shadow: 0 0 6px rgba(79, 70, 229, 0.2); /* Уменьшенная тень */
+  filter: brightness(0.95); /* Уменьшение яркости */
 }
 
-
+/* Стили для отключённых кнопок */
 button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+  opacity: 0.5; /* Полупрозрачность */
+  cursor: not-allowed; /* Курсор "запрещено" */
 }
 
+/* ----------------------------------- */
+/* Стили для блока результатов         */
+/* ----------------------------------- */
+/* Стили для отображения результатов */
 .results {
-  margin-top: 16px;
-  padding: 12px;
-  background: #11141b;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    "Liberation Mono", "Courier New", monospace;
+  margin-top: 16px; /* Отступ сверху */
+  padding: 12px; /* Внутренние отступы */
+  background: #11141b; /* Тёмный фон */
+  border: 1px solid var(--border); /* Граница */
+  border-radius: 6px; /* Скруглённые углы */
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; /* Моноширинный шрифт */
 }
 
+/* ----------------------------------- */
+/* Приглушённый текст                 */
+/* ----------------------------------- */
+/* Стили для текста с приглушённым цветом */
 .muted {
-  color: var(--muted);
+  color: var(--muted); /* Приглушённый цвет */
 }
 
+/* ----------------------------------- */
+/* Кодовые блоки                      */
+/* ----------------------------------- */
+/* Стили для отображения кода */
 code {
-  background: #11141b;
-  padding: 2px 4px;
-  border-radius: 4px;
+  background: #11141b; /* Тёмный фон */
+  padding: 2px 4px; /* Внутренние отступы */
+  border-radius: 4px; /* Скруглённые углы */
 }
 
+/* ----------------------------------- */
+/* Контейнер для графиков             */
+/* ----------------------------------- */
+/* Стили для канваса графиков */
 #chartsContainer canvas {
-  max-width: 100%;
-  margin-bottom: 16px;
+  max-width: 100%; /* Ограничение ширины */
+  margin-bottom: 16px; /* Отступ снизу */
 }
 
+/* ----------------------------------- */
+/* Скрытые элементы                   */
+/* ----------------------------------- */
+/* Скрытие элементов с классом hidden */
 .hidden {
   display: none;
 }
 
+/* ----------------------------------- */
+/* Прелоадер                          */
+/* ----------------------------------- */
+/* Стили для прелоадера (загрузочного экрана) */
 #preloader {
-  position: fixed;
+  position: fixed; /* Фиксированное положение */
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  transition: opacity 0.4s ease, visibility 0.4s ease;
+  width: 100%; /* Полная ширина */
+  height: 100%; /* Полная высота */
+  background: var(--bg); /* Фон совпадает с основным */
+  display: flex; /* Flexbox для центрирования */
+  align-items: center; /* Центрирование по вертикали */
+  justify-content: center; /* Центрирование по горизонтали */
+  z-index: 9999; /* Высокий уровень слоя */
+  transition: opacity 0.4s ease, visibility 0.4s ease; /* Плавное скрытие */
 }
 
+/* Скрытие прелоадера */
 #preloader.hidden {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
+  opacity: 0; /* Прозрачность */
+  visibility: hidden; /* Скрытие */
+  pointer-events: none; /* Отключение взаимодействия */
 }
 
+/* Стили для спиннера в прелоадере */
 .spinner {
-  width: 48px;
+  width: 48px; /* Размер спиннера */
   height: 48px;
-  border: 4px solid var(--border);
-  border-top: 4px solid var(--accent);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+  border: 4px solid var(--border); /* Граница */
+  border-top: 4px solid var(--accent); /* Акцентный цвет верхней части */
+  border-radius: 50%; /* Круглая форма */
+  animation: spin 1s linear infinite; /* Анимация вращения */
 }
 
+/* Анимация вращения спиннера */
 @keyframes spin {
   to {
-    transform: rotate(360deg);
+    transform: rotate(360deg); /* Полный поворот */
   }
 }
 
-
-/* Новый блок для переключателя логов */
+/* ----------------------------------- */
+/* Переключатель (switch)             */
+/* ----------------------------------- */
+/* Стили для строки с переключателем */
 .switch-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  display: flex; /* Гибкая раскладка */
+  align-items: center; /* Выравнивание по центру */
+  gap: 12px; /* Отступ между элементами */
 }
 
+/* Контейнер переключателя */
 .switch {
   position: relative;
   display: inline-block;
-  width: 50px;
-  height: 28px;
+  width: 50px; /* Ширина переключателя */
+  height: 28px; /* Высота переключателя */
 }
 
+/* Скрытие стандартного input */
 .switch input {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
+/* Стили для слайдера переключателя */
 .slider {
   position: absolute;
-  cursor: pointer;
-  top: 0; left: 0;
-  right: 0; bottom: 0;
-  background-color: #444;
-  transition: 0.4s;
-  border-radius: 34px;
+  cursor: pointer; /* Курсор указателя */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #444; /* Фон в выключенном состоянии */
+  transition: 0.4s; /* Плавный переход */
+  border-radius: 34px; /* Скруглённые углы */
 }
 
+/* Ползунок слайдера */
 .slider:before {
   position: absolute;
-  content: "";
-  height: 20px;
-  width: 20px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  transition: 0.4s;
-  border-radius: 50%;
+  content: ""; /* Пустой контент */
+  height: 20px; /* Высота ползунка */
+  width: 20px; /* Ширина ползунка */
+  left: 4px; /* Отступ слева */
+  bottom: 4px; /* Отступ снизу */
+  background-color: white; /* Белый цвет */
+  transition: 0.4s; /* Плавный переход */
+  border-radius: 50%; /* Круглая форма */
 }
 
+/* Стили для включённого состояния */
 .switch input:checked + .slider {
-  background-color: var(--accent);
+  background-color: var(--accent); /* Акцентный цвет */
 }
 
+/* Перемещение ползунка в включённом состоянии */
 .switch input:checked + .slider:before {
-  transform: translateX(22px);
+  transform: translateX(22px); /* Сдвиг вправо */
 }
 
-/* Тема для альтернативного формата */
+/* ----------------------------------- */
+/* Альтернативный режим оформления    */
+/* ----------------------------------- */
+/* Стили для альтернативной темы */
 body.alt-mode main {
-  /* background: #0e121b; */
-  transition: background 0.3s ease;
+  /* background: #0e121b; */ /* Закомментированный фон */
+  transition: background 0.3s ease; /* Плавный переход фона */
 }
 
 body.alt-mode .card {
-  background: #191e2b;
-  transition: background 0.3s ease;
+  background: #191e2b; /* Тёмный фон для карточек */
+  transition: background 0.3s ease; /* Плавный переход фона */
 }
 
 body.alt-mode textarea::placeholder {
-  /* color: #c6baff; */
+  /* color: #c6baff; */ /* Закомментированный цвет плейсхолдера */
 }

@@ -1,25 +1,43 @@
-
+<!-- ----------------------------------- -->
+<!-- Объявление документа и метаданные   -->
+<!-- ----------------------------------- -->
+<!-- Определяет тип документа, язык и основные метаданные страницы -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Helper</title>
+  <meta charset="UTF-8"> <!-- Кодировка страницы -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Адаптивная ширина для мобильных устройств -->
+  <title>Admin Helper</title> <!-- Заголовок страницы -->
+  <!-- Подключение внешнего CSS-файла -->
   <link rel="stylesheet" href="style.css">
+  <!-- Иконки для вкладки браузера (favicon) -->
   <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon.png"/>
   <link rel="icon" type="image/png" sizes="16x16" href="./images/favicon.png"/>
 
+  <!-- Динамическое добавление favicon через JavaScript -->
   <script>
-  const favicon = document.createElement('link');
-  favicon.rel = 'icon';
-  favicon.href = 'https://arizona-rp.com/favicon-16x16.png';
-  favicon.type = 'image/png';
-  document.head.appendChild(favicon);
-</script>
+    const favicon = document.createElement('link');
+    favicon.rel = 'icon';
+    favicon.href = 'https://arizona-rp.com/favicon-16x16.png';
+    favicon.type = 'image/png';
+    document.head.appendChild(favicon);
+  </script>
 </head>
+
+<!-- ----------------------------------- -->
+<!-- Тело страницы                      -->
+<!-- ----------------------------------- -->
+<!-- Основная структура страницы с фоновым канвасом, прелоадером и контентом -->
 <body>
+  <!-- Фоновый канвас для декоративного эффекта (например, звёзды) -->
   <canvas id="stars"></canvas>
+  <!-- Прелоадер с анимацией спиннера -->
   <div id="preloader"><div class="spinner"></div></div>
+
+  <!-- ----------------------------------- -->
+  <!-- Боковая панель навигации           -->
+  <!-- ----------------------------------- -->
+  <!-- Навигационное меню с вкладками -->
   <aside>
     <nav>
       <a href="#dashboard" data-tab="dashboard">Дашборд</a>
@@ -28,7 +46,13 @@
       <a href="#settings" data-tab="settings">Настройки</a>
     </nav>
   </aside>
+
+  <!-- ----------------------------------- -->
+  <!-- Основной контент                   -->
+  <!-- ----------------------------------- -->
+  <!-- Содержимое страницы, разделённое на вкладки -->
   <main>
+    <!-- Вкладка "Дашборд" -->
     <div class="tab" id="dashboard">
       <h1>Дашборд</h1>
       <div class="card">
@@ -36,8 +60,10 @@
       </div>
     </div>
 
+    <!-- Вкладка "Онлайн по логам" (активна по умолчанию) -->
     <div class="tab active" id="online">
       <h1>Подсчёт онлайна по логам</h1>
+      <!-- Переключатель типа логов -->
       <div class="card" style="margin-bottom: 16px;">
         <label for="logTypeSwitcher">Вариант логов:</label>
         <div class="switch-row">
@@ -48,10 +74,12 @@
           <span id="logModeLabel">Основные логи</span>
         </div>
       </div>
+      <!-- Поле для ввода логов -->
       <div class="card">
         <label for="logsInput">Логи (вставляйте длинный текст сюда)</label>
         <textarea id="logsInput" placeholder=""></textarea>
       </div>
+      <!-- Фильтр периода -->
       <div class="card">
         <h3>Фильтр периода</h3>
         <div class="row">
@@ -74,8 +102,11 @@
         </div>
         <button id="calcBtn">Рассчитать</button>
       </div>
+      <!-- Контейнер для результатов -->
       <div class="card results" id="results" hidden></div>
+      <!-- Контейнер для графиков (скрыт по умолчанию) -->
       <div class="card hidden" id="chartsContainer"></div>
+      <!-- Информация о работе функции -->
       <div class="card">
         <details>
           <summary>Как это работает</summary>
@@ -88,6 +119,7 @@
       </div>
     </div>
 
+    <!-- Вкладка "Инструменты" -->
     <div class="tab" id="tools">
       <h1>Инструменты</h1>
       <div class="card">
@@ -95,6 +127,7 @@
       </div>
     </div>
 
+    <!-- Вкладка "Настройки" -->
     <div class="tab" id="settings">
       <h1>Настройки</h1>
       <div class="card">
@@ -102,12 +135,20 @@
       </div>
     </div>
   </main>
+
+  <!-- ----------------------------------- -->
+  <!-- Скрипты                            -->
+  <!-- ----------------------------------- -->
+  <!-- Скрипты для управления поведением страницы -->
+  <!-- Скрытие прелоадера после загрузки страницы -->
   <script>
     window.addEventListener('load', () => {
       document.getElementById('preloader').classList.add('hidden');
     });
   </script>
+  <!-- Подключение библиотеки Chart.js для графиков -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Подключение основного JavaScript-файла -->
   <script src="main.js"></script>
 </body>
 </html>
